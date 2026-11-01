@@ -164,7 +164,7 @@ var _hmt = _hmt || [];
     <button class="btn-ghost" onclick="go('#/history')">查看往期结果</button>
     <p class="home-foot">zerb 出品 · 免费测试 · 结果仅保存在本设备</p>
     <!-- 展示数字（营造人气用，可自行改大改小）：真实数据在百度统计后台看 -->
-    <p class="home-foot">已有 47526 人做过测试 · 累计 59647 人次访问</p>
+    <p class="home-foot">已有 <span id="cnt-people">0</span> 人做过测试 · 累计 <span id="cnt-visits">520</span> 人次访问</p>
   </section>
 
   <!-- ===== 视图：答题 ===== -->
@@ -2534,6 +2534,26 @@ function vote(i){
 function retry(){ startTest(); }
 
 render();
+
+/* 人气数字自动增长（展示用，模拟实时有人测试；真实数据看百度统计后台） */
+(function(){
+  var p = document.getElementById('cnt-people');
+  var v = document.getElementById('cnt-visits');
+  if(!p || !v) return;
+  var saved = null;
+  try { saved = JSON.parse(localStorage.getItem('zerb_count_v2') || 'null'); } catch(e){}
+  var np = (saved && saved.np != null) ? saved.np : (parseInt(p.textContent, 10) || 0);
+  var nv = (saved && saved.nv != null) ? saved.nv : (parseInt(v.textContent, 10) || 0);
+  p.textContent = np; v.textContent = nv;
+  function tick(){
+    var add = 1 + Math.floor(Math.random() * 3);
+    np += add;
+    nv += add + Math.floor(Math.random() * 2);
+    p.textContent = np; v.textContent = nv;
+    try { localStorage.setItem('zerb_count_v1', JSON.stringify({np: np, nv: nv})); } catch(e){}
+  }
+  setInterval(tick, 2000 + Math.floor(Math.random() * 3000));
+})();
 </script>
 </body>
 </html>
