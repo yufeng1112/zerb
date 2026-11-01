@@ -85,6 +85,11 @@ h1.title .hl{color:var(--gold-deep)}
 .three .cell .k{font-size:12px;color:var(--sub);margin-bottom:5px}
 .three .cell .v{font-family:var(--serif);font-size:14px;font-weight:800;color:#6B5236;line-height:1.45}
 .warn-box{background:#FBF1E3;border-left:4px solid var(--gold);border-radius:0 14px 14px 0;padding:13px 15px;margin-top:12px;font-size:14px;color:#6B5236;line-height:1.7}
+/* 折叠展开 */
+.fold-body{max-height:96px;overflow:hidden;-webkit-mask-image:linear-gradient(#000 72%,transparent);mask-image:linear-gradient(#000 72%,transparent);transition:max-height .35s ease}
+.fold.open .fold-body{max-height:none;-webkit-mask-image:none;mask-image:none}
+.fold-btn{display:block;width:100%;margin:14px auto 2px;padding:12px 0;background:#F7EAD8;border:1px solid #E3CBA8;border-radius:999px;color:#8a6a45;font-size:14px;font-weight:700;letter-spacing:.05em;cursor:pointer}
+.fold-btn:active{transform:scale(.98)}
 .quotes{background:linear-gradient(160deg,#5C4A3A,#7A6246);border-radius:22px;padding:24px 20px;color:#F7EAD8;box-shadow:0 12px 30px rgba(92,74,58,.25)}
 .quotes .sec-title{color:#F7EAD8}
 .quotes .sec-no{color:#D9B98C}
@@ -128,6 +133,16 @@ h1.title .hl{color:var(--gold-deep)}
 .vote-grid button:active{transform:scale(.97);background:#F7EAD8}
 .vote-grid button.done{background:#F7EAD8;border-color:#D9A975;color:#8a6a45}
 </style>
+<!-- ===== 百度统计（tongji.baidu.com 后台看真实访问数据） ===== -->
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?eee23245609f8a13b325c12b6430ddc3";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
 </head>
 <body>
 <div class="app">
@@ -148,6 +163,8 @@ h1.title .hl{color:var(--gold-deep)}
     <button class="btn-main" onclick="startTest()">开始测试</button>
     <button class="btn-ghost" onclick="go('#/history')">查看往期结果</button>
     <p class="home-foot">zerb 出品 · 免费测试 · 结果仅保存在本设备</p>
+    <!-- 展示数字（营造人气用，可自行改大改小）：真实数据在百度统计后台看 -->
+    <p class="home-foot">已有 666 人做过测试 · 累计 888 人次访问</p>
   </section>
 
   <!-- ===== 视图：答题 ===== -->
@@ -2406,7 +2423,7 @@ function renderResult(){
   html += '<div class="p-dom">主导维度 · ' + escapeHtml(domLabel) + '</div>';
   html += '<div class="p-voice">' + escapeHtml(p.voice) + '</div>';
   html += '</div>';
-  html += '<div class="section"><div class="sec-head"><span class="sec-no">01</span><span class="sec-title">财富自画像</span></div><div class="sec-body">' + escapeHtml(desc) + '</div></div>';
+  html += '<div class="section fold"><div class="sec-head"><span class="sec-no">01</span><span class="sec-title">财富自画像</span></div><div class="sec-body fold-body">' + escapeHtml(desc) + '</div><button class="fold-btn" onclick="toggleFold(this)">展开完整内容</button></div>';
   html += '<div class="section"><div class="sec-head"><span class="sec-no">02</span><span class="sec-title">八维能力结构</span></div>';
   DIMENSION_ORDER.forEach(function(k){
     var d = r.dims[k];
@@ -2419,11 +2436,11 @@ function renderResult(){
   html += '<div class="cell"><div class="k">长期优势</div><div class="v">' + escapeHtml(lAdv) + '</div></div>';
   html += '</div></div>';
   html += '<div class="section"><div class="sec-head"><span class="sec-no">04</span><span class="sec-title">现实中的你</span></div><div class="sec-body">' + escapeHtml(reality) + '</div></div>';
-  html += '<div class="section"><div class="sec-head"><span class="sec-no">05</span><span class="sec-title">盲点与风险提醒</span></div><div class="sec-body">';
+  html += '<div class="section fold"><div class="sec-head"><span class="sec-no">05</span><span class="sec-title">盲点与风险提醒</span></div><div class="sec-body fold-body">';
   html += '<div class="warn-box"><b>盲点：</b>' + escapeHtml(bSpot) + '</div>';
   html += '<div class="warn-box"><b>风险：</b>' + escapeHtml(rWarn) + '</div>';
   html += '<div class="warn-box"><b>给你的建议：</b>' + escapeHtml(advice) + '</div>';
-  html += '</div></div>';
+  html += '</div><button class="fold-btn" onclick="toggleFold(this)">展开完整内容</button></div>';
   html += '<div class="quotes"><div class="sec-head"><span class="sec-no">06</span><span class="sec-title">灵魂台词</span></div>';
   r.quotes.forEach(function(q){
     html += '<div class="q-item"><span class="m">◆</span><span>' + escapeHtml(q) + '</span></div>';
@@ -2453,6 +2470,13 @@ function renderHistory(){
 }
 
 /* --- 工具 --- */
+/* 折叠展开切换 */
+function toggleFold(btn){
+  var f = btn.parentNode;
+  if(f.classList.contains('open')){ f.classList.remove('open'); btn.textContent = '展开完整内容'; }
+  else { f.classList.add('open'); btn.textContent = '收起'; }
+}
+
 function escapeHtml(s){
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
